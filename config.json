@@ -1,0 +1,39 @@
+{
+  "sensors": [
+    {
+      "type": "temperature",
+      "model": "DHT22",
+      "pin": 4
+    },
+    {
+      "type": "humidity",
+      "model": "DHT22",
+      "pin": 4
+    }
+  ],
+  "networks": [
+    {
+      "category": "cellular",
+      "type": "Cat-M1",
+      "apn": "your_apn"
+    },
+    {
+      "category": "wifi",
+      "ssid": "your_ssid",
+      "password": "your_wifi_password"
+    }
+  ],
+  "traffic_interval": 60,
+  "protocol": {
+    "type": "CoAP",
+    "broker": "coap.example.com",
+    "port": 5683,
+    "username": "coap_user",
+    "password": "coap_password",
+    "topic": "sensors/temperature_humidity",
+    "security": {
+      "encryption": "DTLS",
+      "certificate_path": "path/to/certificate"
+    }
+  }
+}
