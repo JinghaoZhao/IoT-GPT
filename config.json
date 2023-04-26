@@ -25,15 +25,17 @@
   ],
   "traffic_interval": 60,
   "protocol": {
-    "type": "CoAP",
-    "broker": "coap.example.com",
-    "port": 5683,
-    "username": "coap_user",
-    "password": "coap_password",
-    "topic": "sensors/temperature_humidity",
+    "type": "MQTT",
+    "broker": "localhost",
+    "port": 8883,
+    "username": "",
+    "password": "",
+    "topic": "test/topic",
     "security": {
-      "encryption": "DTLS",
-      "certificate_path": "path/to/certificate"
+      "encryption": "TLS",
+      "ca_certificate_path": "./certs/ca.crt",
+      "client_certificate_path": "./certs/client.crt",
+      "client_key_path": "./certs/client.key"
     }
   }
 }
