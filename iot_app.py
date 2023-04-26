@@ -1,54 +1,46 @@
 import json
 import time
-from modem_manager import ModemManager
-from wifi_manager import WifiManager
+from network_manager import NetworkManager
 from protocol_manager import ProtocolManager
 from sensor_manager import SensorManager
 
-# Load JSON configuration
-with open('config.json', 'r') as file:
-    config = json.load(file)
+def main():
+    # Load JSON configuration
+    with open('config.json', 'r') as file:
+        config = json.load(file)
 
-# Initialize sensor
-sensor_manager = SensorManager(config['sensors'])
+    # Initialize SensorManager
+    sensor_manager = SensorManager(config['sensors'])
 
-# Network configuration
-network_config = config['networks'][0]  # Get the first network in configuration
-network_category = network_config['category']
+    # Initialize NetowrkManager
+    network_manager = NetworkManager(config['networks'])
+    network_manager.connect()
 
-if network_category == 'cellular':
-    modem_manager = ModemManager(network_config)
-    modem_manager.connect()
-elif network_category == 'wifi':
-    wifi_manager = WifiManager(network_config)
-    wifi_manager.connect()
+    # Configure application protocol
+    protocol_config = config['protocol']
+    protocol_manager = ProtocolManager(protocol_config)
 
-# Application protocol configuration
-protocol_config = config['protocol']
-protocol_manager = ProtocolManager(protocol_config)
+    # Configure traffic interval
+    traffic_interval = config['traffic_interval']
 
-# Main loop
-traffic_interval = config['traffic_interval']
-while True:
-    try:
-        # Read sensor data
-        temperature = sensor_manager.read_temperature()
-        humidity = sensor_manager.read_humidity()
+    # Main loop
+    while True:
+        try:
+            # Read sensor data
+            sensor_message = sensor_manager.generate_message()
 
-        # Publish sensor data
-        message = {
-            "temperature": temperature,
-            "humidity": humidity
-        }
-        protocol_manager.publish(json.dumps(message))
-        print(f"Published data: {message}")
+            protocol_manager.publish(json.dumps(sensor_message))
+            print(f"Published data: {sensor_message}")
 
-        # Sleep for the traffic interval
-        time.sleep(traffic_interval)
+            # Sleep for the traffic interval
+            time.sleep(traffic_interval)
 
-    except RuntimeError as error:
-        print(error.args[0])
-        time.sleep(2.0)
-    except Exception as error:
-        protocol_manager.disconnect()
-        raise error
+        except RuntimeError as error:
+            print(error.args[0])
+            time.sleep(2.0)
+        except Exception as error:
+            protocol_manager.disconnect()
+            raise error
+
+if __name__ == "__main__":
+    main()

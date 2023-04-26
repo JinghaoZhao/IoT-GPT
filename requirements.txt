@@ -5,3 +5,4 @@ gradio
 paho-mqtt
 adafruit-circuit
 python-dht
+aiocoap
