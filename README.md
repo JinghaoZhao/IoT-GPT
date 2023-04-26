@@ -1,11 +1,11 @@
 # IoT-GPT
-Build Raspberry Pi IoT Applications with ChatGPT.
+Raspberry Pi IoT Platform powered by GPT-4. Customize your own IoT application with natural language.
 
 ## Installation
 
 1. Clone this repository and install the required packages:
 ```
-git clone git@github.com:JinghaoZhao/IoT-GPT.git
+git clone https://github.com/JinghaoZhao/IoT-GPT.git
 pip install -r requirements.txt
 ```
 2. Create a `.env` file to put your API key:

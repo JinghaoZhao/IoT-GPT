@@ -6,7 +6,7 @@ import os
 API_URL = "https://api.openai.com/v1/chat/completions"
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
-with open('config.json', 'r') as file:
+with open('config_template.json', 'r') as file:
     config = file.read()
 
 IoTGPT_prompt = """Now you are an expert IoT configuration developer and programmer. 
