@@ -1,0 +1,7 @@
+python-dotenv
+pyserial
+hupper
+gradio
+paho-mqtt
+adafruit-circuit
+python-dht
