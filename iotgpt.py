@@ -127,17 +127,24 @@ def main():
                 label='IoT-GPT',
                 elem_id="chatbot"
             )
-            inputs = gr.Textbox(
-                placeholder="What IoT apps do you want to build?",
-                lines=1,
-                label="Type an input and press Enter"
-            )
             state = gr.State([])
             with gr.Row():
-                with gr.Column(scale=7):
+                with gr.Column(scale=8):
+                    inputs = gr.Textbox(
+                        placeholder="What IoT apps do you want to build?",
+                        lines=1,
+                        label="Type an input and press Enter"
+                    )
+                with gr.Column(scale=2):
                     b1 = gr.Button().style(full_width=True)
-                with gr.Column(scale=3):
-                    server_status_code = gr.Textbox(label="Status code from OpenAI server", )
+
+            with gr.Accordion(label="Examples", open=True):
+                gr.Examples(
+                    examples=[[
+                                  "I want to build a temperature sensor IoT app with BME280 connected to GPIO 15. The network uses NB-IoT with APN testapn. The application protocol uses MQTT with the following info broker: mqtt.example.com, default port, username: testuser, password: testpass topic: temp, security uses TLS, no cert."],
+                              ["I want to build a GPS tracker IoT app."],
+                              ],
+                    inputs=inputs)
 
             with gr.Accordion("Parameters", open=False):
                 top_p = gr.Slider(minimum=-0, maximum=1.0, value=0.5, step=0.05, interactive=True,
@@ -147,9 +154,9 @@ def main():
                 chat_counter = gr.Number(value=0, visible=False, precision=0)
 
         inputs.submit(generate_response, [system_msg, inputs, top_p, temperature, chat_counter, chatbot, state],
-                      [chatbot, state, chat_counter, server_status_code], )
+                      [chatbot, state, chat_counter], )
         b1.click(generate_response, [system_msg, inputs, top_p, temperature, chat_counter, chatbot, state],
-                 [chatbot, state, chat_counter, server_status_code], )
+                 [chatbot, state, chat_counter], )
 
         inputs.submit(set_visible_false, [], [system_msg])
         b1.click(set_visible_false, [], [system_msg])
@@ -158,13 +165,6 @@ def main():
 
         b1.click(reset_textbox, [], [inputs])
         inputs.submit(reset_textbox, [], [inputs])
-
-        with gr.Accordion(label="Examples for System message:", open=False):
-            gr.Examples(
-                examples=[["I want to build a temperature sensor IoT app with BME280 connected to GPIO 15. The network uses NB-IoT with APN testapn. The application protocol uses MQTT with the following info broker: mqtt.example.com, default port, username: testuser, password: testpass topic: temp, security uses TLS, no cert."],
-                          ["I want to build a GPS tracker IoT app."],
-                ],
-                inputs=inputs)
 
     demo.queue(max_size=99, concurrency_count=20).launch(debug=True)
 
