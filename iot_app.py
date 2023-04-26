@@ -1,13 +1,14 @@
 import json
 import time
+import yaml
 from network_manager import NetworkManager
 from protocol_manager import ProtocolManager
 from sensor_manager import SensorManager
 
 def main():
-    # Load JSON configuration
-    with open('config.json', 'r') as file:
-        config = json.load(file)
+    # Load configuration
+    with open("config.yaml", "r") as f:
+        config = yaml.load(f, Loader=yaml.FullLoader)
 
     # Initialize SensorManager
     sensor_manager = SensorManager(config['sensors'])

@@ -6,18 +6,20 @@ import os
 API_URL = "https://api.openai.com/v1/chat/completions"
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
-with open('config_template.json', 'r') as file:
+with open('config.yaml', 'r') as file:
     config = file.read()
 
 IoTGPT_prompt = """Now you are an expert IoT configuration developer and programmer. 
-    You need to fill the following JSON configurations according to the user input. 
+    You need to fill the following YAML configurations according to the user input. 
     The JSON configuration is required by a Raspberry Pi IoT application. 
     The sensor type could be temperature, humidity, pressure, etc. 
     The network could be NB-IoT, Cat-M, LTE, 5G, WiFi, etc. Only one network need to be configured.  
     The traffic interval is the value of seconds between two transmissions. 
     The IoT protocol could be CoAP or MQTT. 
+    The default port is 1883 for MQTT not encrypted, 8883 for MQTT encrypted, 5683 for CoAP not encrypted, 5684 for CoAP encrypted.
     If you need any details clarified, please ask questions until all issues are clarified.
-    Here is an example json format:""" + config
+    The output yaml does not need to include comments.
+    Here is an example YAML format:""" + config
 
 
 def generate_response(system_msg, inputs, top_p, temperature, chat_counter, chatbot=[], history=[]):
