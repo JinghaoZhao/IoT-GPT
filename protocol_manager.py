@@ -1,3 +1,4 @@
+import time
 import paho.mqtt.client as mqtt
 from aiocoap import Context, Message
 from aiocoap.numbers.codes import Code
@@ -6,6 +7,7 @@ import asyncio
 
 class ProtocolManager:
     def __init__(self, protocol_config):
+        self.connected_flag = False
         self.protocol = protocol_config['type']
         self.broker = protocol_config['broker']
         self.port = protocol_config['port']
@@ -13,13 +15,16 @@ class ProtocolManager:
         self.password = protocol_config['password']
         self.topic = protocol_config['topic']
         self.encryption = protocol_config['security']['encryption']
-        self.certificate_path = protocol_config['security']['certificate_path']
+        self.ca_certificate_path = protocol_config['security']['ca_certificate_path']
+        self.client_certificate_path = protocol_config['security']['client_certificate_path']
+        self.client_key_path = protocol_config['security']['client_key_path']
 
         if self.protocol == 'MQTT':
             self.client = mqtt.Client()
             self.client.username_pw_set(self.username, self.password)
-            self.client.tls_set(self.certificate_path)
-            self.client.connect(self.broker, self.port)
+            self.client.tls_set(ca_certs=self.ca_certificate_path,
+                                certfile=self.client_certificate_path,
+                                keyfile=self.client_key_path)
 
         elif self.protocol == 'CoAP':
             self.context = None
@@ -31,6 +36,21 @@ class ProtocolManager:
                     }
                 }
             }
+
+    def mqtt_on_connect(self, client, userdata, flags, rc):
+        if rc == 0:
+            self.connected_flag = True
+            print("MQTT broker connected.")
+        else:
+            print("Bad MQTT connection; Returned code=", rc)
+
+    def mqtt_connect(self):
+        self.client.on_connect = self.mqtt_on_connect
+        self.client.loop_start()
+        self.client.connect(self.broker, self.port)
+        while not self.connected_flag:
+            print("Waiting for MQTT broker connection...")
+            time.sleep(1)
 
     async def create_coap_context(self):
         if self.context is None:
@@ -55,6 +75,10 @@ class ProtocolManager:
             loop = asyncio.get_event_loop()
             loop.run_until_complete(self.publish_coap(self.topic, message))
 
+    def connect(self):
+        if self.protocol == 'MQTT':
+            self.mqtt_connect()
     def disconnect(self):
         if self.protocol == 'MQTT':
+            self.client.loop_stop()
             self.client.disconnect()

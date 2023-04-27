@@ -33,10 +33,11 @@ protocol:
   # 5683 for CoAP not encrypted, 5684 for CoAP encrypted)
   port: 8883
   username: '' # Broker username (optional)
-  password: '' # Broker password (optional)
-  topic: test/topic # Topic for publishing data
+  password: '' # Broker password (mandatory if CoAP with DTLS is used)
+  topic: test/topic # Topic for publishing data (mandatory)
   security:
-    encryption: TLS # Encryption type
+    encryption: TLS # Encryption type: TLS support for MQTT, DTLS support for CoAP
     ca_certificate_path: './certs/ca.crt' # CA certificate path (mandatory for TLS)
     client_certificate_path: './certs/client.crt' # Client certificate path (mandatory for TLS)
     client_key_path: './certs/client.key' # Client key path (mandatory for TLS)
+    psk: '' # Pre-shared key (mandatory for DTLS)
