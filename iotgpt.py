@@ -142,9 +142,9 @@ def main():
 
             with gr.Accordion(label="Examples", open=True):
                 gr.Examples(
-                    examples=[[
-                                  "I want to build a temperature sensor IoT app with BME280 connected to GPIO 15. The network uses NB-IoT with APN testapn. The application protocol uses MQTT with the following info broker: mqtt.example.com, default port, username: testuser, password: testpass topic: temp, security uses TLS, no cert."],
+                    examples=[["I want to build a temperature sensor IoT app with BME280 connected to GPIO 15. The network uses NB-IoT with APN testapn. The application protocol uses MQTT with the following info broker: mqtt.example.com, default port, username: testuser, password: testpass topic: temp, security uses TLS, no cert."],
                               ["I want to build a GPS tracker IoT app."],
+                              ["I want to build a temperature sensor IoT app with BME280 connected to GPIO 15. The network uses NB-IoT with APN testapn. The application protocol uses CoAP with the following info broker: coap.example.com, default port, username: testuser, password: testpass topic: temp, security uses DTLS, key 123456"],
                               ],
                     inputs=inputs)
 
