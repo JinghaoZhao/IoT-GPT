@@ -27,17 +27,17 @@ traffic_interval: 60 # Value of seconds between two transmissions
 
 # Protocol configuration
 protocol:
-  type: MQTT # IoT protocol (e.g., CoAP or MQTT)
-  broker: localhost # Broker address
-  # Broker port (default: 1883 for MQTT not encrypted, 8883 for MQTT encrypted,
-  # 5683 for CoAP not encrypted, 5684 for CoAP encrypted)
-  port: 8883
+  type: CoAP # IoT protocol (e.g., CoAP or MQTT)
+  broker: 131.179.176.75 # Broker address
+  # Broker port (default: 1883 for MQTT not encrypted, 8883 for MQTT with TLS,
+  # 5683 for CoAP not encrypted, 5684 for CoAP with DTLS)
+  port: 5684
   username: '' # Broker username (optional)
   password: '' # Broker password (mandatory if CoAP with DTLS is used)
   topic: test/topic # Topic for publishing data (mandatory)
   security:
-    encryption: TLS # Encryption type: TLS support for MQTT, DTLS support for CoAP
+    encryption: DTLS # Encryption type: None for no encryption, TLS for MQTT, DTLS for CoAP
     ca_certificate_path: './certs/ca.crt' # CA certificate path (mandatory for TLS)
     client_certificate_path: './certs/client.crt' # Client certificate path (mandatory for TLS)
     client_key_path: './certs/client.key' # Client key path (mandatory for TLS)
-    psk: '' # Pre-shared key (mandatory for DTLS)
+    psk: '123456' # Pre-shared key (mandatory for DTLS)

@@ -15,27 +15,35 @@ class ProtocolManager:
         self.password = protocol_config['password']
         self.topic = protocol_config['topic']
         self.encryption = protocol_config['security']['encryption']
-        self.ca_certificate_path = protocol_config['security']['ca_certificate_path']
-        self.client_certificate_path = protocol_config['security']['client_certificate_path']
-        self.client_key_path = protocol_config['security']['client_key_path']
 
         if self.protocol == 'MQTT':
             self.client = mqtt.Client()
             self.client.username_pw_set(self.username, self.password)
-            self.client.tls_set(ca_certs=self.ca_certificate_path,
-                                certfile=self.client_certificate_path,
-                                keyfile=self.client_key_path)
+            if self.encryption == "TLS":
+                self.ca_certificate_path = protocol_config['security']['ca_certificate_path']
+                self.client_certificate_path = protocol_config['security']['client_certificate_path']
+                self.client_key_path = protocol_config['security']['client_key_path']
+                if not self.ca_certificate_path or not self.client_certificate_path or not self.client_key_path:
+                    raise ValueError("Please set the TLS certificates in the config")
+                self.client.tls_set(ca_certs=self.ca_certificate_path,
+                                    certfile=self.client_certificate_path,
+                                    keyfile=self.client_key_path)
 
         elif self.protocol == 'CoAP':
             self.context = None
-            self.psk_store = {
-                f"coaps://{self.broker}/*": {
-                    "dtls": {
-                        "psk": self.password.encode(),
-                        "client-identity": self.username.encode()
+            self.psk_store = None
+            if self.encryption == "DTLS":
+                self.psk = protocol_config['security']['psk']
+                if not self.psk:
+                    raise ValueError("Please set the PSK in the config")
+                self.psk_store = {
+                    f"coaps://{self.broker}:{self.port}/*": {
+                        "dtls": {
+                            "psk": self.psk.encode(),
+                            "client-identity": self.username.encode()
+                        }
                     }
                 }
-            }
 
     def mqtt_on_connect(self, client, userdata, flags, rc):
         if rc == 0:
@@ -55,12 +63,13 @@ class ProtocolManager:
     async def create_coap_context(self):
         if self.context is None:
             self.context = await Context.create_client_context()
-            self.context.client_credentials.load_from_dict(self.psk_store)
+            if self.encryption == "DTLS":
+                self.context.client_credentials.load_from_dict(self.psk_store)
 
     async def publish_coap(self, topic, message):
         await self.create_coap_context()
 
-        protocol = "coaps" if self.certificate_path else "coap"
+        protocol = "coaps" if self.psk_store else "coap"
         uri = f"{protocol}://{self.broker}:{self.port}/{topic}"
 
         request = Message(code=Code.POST, uri=uri, payload=message.encode())
