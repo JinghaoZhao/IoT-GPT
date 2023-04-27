@@ -27,11 +27,11 @@ traffic_interval: 60 # Value of seconds between two transmissions
 
 # Protocol configuration
 protocol:
-  type: CoAP # IoT protocol (e.g., CoAP or MQTT)
-  broker: 131.179.176.75 # Broker address
+  type: MQTT # IoT protocol (e.g., CoAP or MQTT)
+  broker: localhost # Broker address
   # Broker port (default: 1883 for MQTT not encrypted, 8883 for MQTT with TLS,
   # 5683 for CoAP not encrypted, 5684 for CoAP with DTLS)
-  port: 5684
+  port: 8883
   username: '' # Broker username (optional)
   password: '' # Broker password (mandatory if CoAP with DTLS is used)
   topic: test/topic # Topic for publishing data (mandatory)
