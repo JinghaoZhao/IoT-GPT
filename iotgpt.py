@@ -10,8 +10,7 @@ with open('config.yaml', 'r') as file:
     config = file.read()
 
 IoTGPT_prompt = """Now you are an expert IoT configuration developer and programmer. 
-    You need to fill the following YAML configurations according to the user input. 
-    The JSON configuration is required by a Raspberry Pi IoT application. 
+    You need to fill the following YAML configurations according to the user input for a Raspberry Pi IoT application. 
     The sensor type could be temperature, humidity, pressure, etc. 
     The network could be NB-IoT, Cat-M, LTE, 5G, WiFi, etc. Only one network need to be configured.  
     The traffic interval is the value of seconds between two transmissions. 
@@ -142,10 +141,10 @@ def main():
 
             with gr.Accordion(label="Examples", open=True):
                 gr.Examples(
-                    examples=[["I want to build a temperature sensor IoT app with BME280 connected to GPIO 15. The network uses NB-IoT with APN testapn. The application protocol uses MQTT with the following info broker: mqtt.example.com, default port, username: testuser, password: testpass topic: temp, security uses TLS, no cert."],
-                              ["I want to build a GPS tracker IoT app."],
-                              ["I want to build a temperature sensor IoT app with BME280 connected to GPIO 15. The network uses NB-IoT with APN testapn. The application protocol uses CoAP with the following info broker: coap.example.com, default port, username: testuser, password: testpass topic: temp, security uses DTLS, key 123456"],
-                              ],
+                    examples=[["I want to build a GPS tracker IoT app."],
+                        ["I want to build a temperature sensor IoT app with BME280 connected to GPIO 15. The network uses NB-IoT with APN testapn. The application protocol uses MQTT with the following info broker: mqtt.example.com, default port, username: testuser, password: testpass topic: temp, security uses TLS, no cert."],
+                        ["I want to build a temperature sensor IoT app with BME280 connected to GPIO 15. The network uses NB-IoT with APN testapn. The application protocol uses CoAP with the following info broker: coap.example.com, default port, username: testuser, password: testpass topic: temp, security uses DTLS, key 123456"],
+                    ],
                     inputs=inputs)
 
             with gr.Accordion("Parameters", open=False):
