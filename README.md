@@ -21,3 +21,7 @@ python run.py
 ```
 python iot_app.py
 ```
+
+## Security Support
+
+If you need security support, such as setting up CoAP DTLS or generate TLS certs for MQTT, please refer the [Installation Notes](Installation.md).
