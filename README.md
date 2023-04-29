@@ -19,7 +19,7 @@ OPENAI_API_KEY=sk-xxxxxx
 python run.py
 ```
 4. Open your web browser at http://127.0.0.1:7860 to generate your own IoT application config.
-5. Store the config as config.json, then run the IoT application on your Raspberry Pi:
+5. Store the config as `config.yaml`, then run the IoT application on your Raspberry Pi:
 ```
 python iot_app.py
 ```
