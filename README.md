@@ -1,7 +1,7 @@
 # IoT-GPT
 Raspberry Pi IoT Platform powered by GPT-4. Customize your own IoT application with natural language.
 
-![IoTGPT.png](docs%2FIoTGPT.png)
+![IoTGPT.jpg](docs%2FIoTGPT.jpg)
 
 ## Installation
 
