@@ -54,7 +54,7 @@ openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out c
 
 A reference MQTT server could be setup with the [mosquitto](https://mosquitto.org/download/)
 
-After installation, run the following commands
+After installation, run the following commands. The sample configuration file is provided in this repository [here](mosquitto.conf)
 ```bash
 mosquitto -c ./mosquitto.conf -v
 ```

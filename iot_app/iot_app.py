@@ -7,7 +7,7 @@ from sensor_manager import SensorManager
 
 def main():
     # Load configuration
-    with open("config.yaml", "r") as f:
+    with open("../config.yaml", "r") as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
 
     # Initialize SensorManager

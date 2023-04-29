@@ -1,0 +1,43 @@
+# Sensor configuration
+sensors:
+  # Temperature sensor
+  - type: temperature # Sensor type (e.g., temperature, humidity, pressure, etc.)
+    model: DHT22 # Sensor model
+    pin: 4 # Pin number on the board
+
+  # Humidity sensor
+  - type: humidity # Sensor type (e.g., temperature, humidity, pressure, etc.)
+    model: DHT22 # Sensor model
+    pin: 4 # Pin number on the board
+
+# Network configuration
+networks:
+  # Cellular network
+  - category: cellular # Network category (e.g., cellular, wifi)
+    type: Cat-M1 # Network type: E.g., NB-IoT, Cat-M, LTE, 5G, etc. (mandatory)
+    apn: your_apn # Access Point Name for cellular network (mandatory)
+
+  # WiFi network
+  - category: wifi # Network category (e.g., cellular, wifi)
+    ssid: your_ssid # Wi-Fi SSID (mandatory for Wi-Fi)
+    password: your_wifi_password # Wi-Fi password (mandatory for Wi-Fi)
+
+# Traffic interval configuration
+traffic_interval: 60 # Value of seconds between two transmissions (mandatory)
+
+# Protocol configuration
+protocol:
+  type: MQTT # IoT protocol (e.g., CoAP or MQTT)
+  broker: localhost # Broker address
+  # Broker port (default: 1883 for MQTT not encrypted, 8883 for MQTT with TLS,
+  # 5683 for CoAP not encrypted, 5684 for CoAP with DTLS)
+  port: 8883
+  username: '' # Broker username (optional)
+  password: '' # Broker password (optional)
+  topic: test/topic # Topic for publishing data (mandatory)
+  security:
+    encryption: DTLS # Encryption type: None for no encryption, TLS for MQTT, DTLS for CoAP
+    ca_certificate_path: './certs/ca.crt' # CA certificate path (mandatory for TLS)
+    client_certificate_path: './certs/client.crt' # Client certificate path (mandatory for TLS)
+    client_key_path: './certs/client.key' # Client key path (mandatory for TLS)
+    psk: '123456' # Pre-shared key (mandatory for DTLS)
