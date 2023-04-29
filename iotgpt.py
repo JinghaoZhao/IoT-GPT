@@ -2,6 +2,7 @@ import gradio as gr
 import json
 import requests
 import os
+from termcolor import colored
 
 API_URL = "https://api.openai.com/v1/chat/completions"
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
@@ -22,6 +23,8 @@ IoTGPT_prompt = """Now you are an expert IoT configuration developer and program
 
 
 def generate_response(system_msg, inputs, top_p, temperature, chat_counter, chatbot=[], history=[]):
+    global generated_yaml_config
+    generated_yaml_config = "No configuration availabile yet."
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {OPENAI_API_KEY}"
@@ -67,17 +70,39 @@ def generate_response(system_msg, inputs, top_p, temperature, chat_counter, chat
 
     chat_counter += 1
     history.append(inputs)
+    print(colored("Inputs: ", "green"), colored(inputs, "green"))
     response = requests.post(API_URL, headers=headers, json=payload, stream=True)
     token_counter = 0
     partial_words = ""
+
+    response_complete = False
 
     counter = 0
     for chunk in response.iter_lines():
         if counter == 0:
             counter += 1
             continue
+
+        if response_complete:
+            print(colored("Response: ", "yellow"), colored(partial_words, "yellow"))
+
+            # Extract YAML config from response and update the text box
+            yaml_start = partial_words.find("```yaml")
+            yaml_end = partial_words.find("```", yaml_start + 7)
+            print(yaml_start, yaml_end)
+            if yaml_start != -1 and yaml_end != -1:
+                yaml_config = partial_words[yaml_start + 7: yaml_end].strip()
+                print(colored(yaml_config, "red"))
+                generated_yaml_config = yaml_config
+            break
+
         if chunk.decode():
             chunk = chunk.decode()
+
+            # Check if the chatbot is done generating the response
+            if len(chunk) > 12 and "finish_reason" in json.loads(chunk[6:])['choices'][0]:
+                response_complete = json.loads(chunk[6:])['choices'][0].get("finish_reason", None) == "stop"
+
             if len(chunk) > 12 and "content" in json.loads(chunk[6:])['choices'][0]['delta']:
                 partial_words = partial_words + json.loads(chunk[6:])['choices'][0]["delta"]["content"]
                 if token_counter == 0:
@@ -92,6 +117,8 @@ def generate_response(system_msg, inputs, top_p, temperature, chat_counter, chat
 def reset_textbox():
     return gr.update(value='')
 
+def fill_output_box():
+    return gr.update(value=generated_yaml_config)
 
 def set_visible_false():
     return gr.update(visible=False)
@@ -110,7 +137,9 @@ def main():
 
     with gr.Blocks(
             css="""#col_container { margin-left: auto; margin-right: auto;} #chatbot {height: 520px; overflow: auto;}""",
-            theme=theme) as demo:
+            theme=theme,
+            title="IoT-GPT",
+    ) as demo:
         gr.HTML(title)
 
         with gr.Column(elem_id="col_container"):
@@ -124,10 +153,21 @@ def main():
                     value="Refresh the app to reset system message",
                     visible=False
                 )
-            chatbot = gr.Chatbot(
-                label='IoT-GPT',
-                elem_id="chatbot"
-            )
+            with gr.Row():
+                with gr.Column(scale=7):
+                    chatbot = gr.Chatbot(
+                        label='IoT-GPT',
+                        elem_id="chatbot"
+                    )
+                with gr.Column(scale=3):
+                    save_config = gr.Button(
+                        value="Save Configuration",
+                    ).style(full_width=True)
+                    yaml_output = gr.Textbox(
+                        label="Generated IoT Configuration",
+                        lines=20
+                    )
+
             state = gr.State([])
             with gr.Row():
                 with gr.Column(scale=8):
@@ -141,9 +181,10 @@ def main():
 
             with gr.Accordion(label="Examples", open=True):
                 gr.Examples(
-                    examples=[["I want to build a GPS tracker IoT app."],
-                        ["I want to build a temperature sensor IoT app with BME280 connected to GPIO 15. The network uses NB-IoT with APN testapn. The application protocol uses MQTT with the following info broker: mqtt.example.com, default port, username: testuser, password: testpass topic: temp, security uses TLS, no cert."],
-                        ["I want to build a temperature sensor IoT app with BME280 connected to GPIO 15. The network uses NB-IoT with APN testapn. The application protocol uses CoAP with the following info broker: coap.example.com, default port, username: testuser, password: testpass topic: temp, security uses DTLS, key 123456"],
+                    examples=[
+                        ["I want to build a temperature sensor IoT app."],
+                        ["I want to build a temperature sensor IoT app with DHT22 connected to GPIO 15. The network uses NB-IoT with APN testapn. The application protocol uses MQTT with the following info broker: mqtt.example.com, default port, username: testuser, password: testpass topic: temp, security uses TLS."],
+                        ["I want to build a temperature sensor IoT app with DHT22 connected to GPIO 15. The network uses NB-IoT with APN testapn. The application protocol uses CoAP with the following info broker: coap.example.com, default port, username: testuser, password: testpass topic: temp, security uses DTLS, psk 123456"],
                     ],
                     inputs=inputs)
 
@@ -152,12 +193,12 @@ def main():
                                   label="Top-p (nucleus sampling)", )
                 temperature = gr.Slider(minimum=-0, maximum=5.0, value=0.5, step=0.1, interactive=True,
                                         label="Temperature", )
-                chat_counter = gr.Number(value=0, visible=False, precision=0)
+                chat_counter = gr.Number(value=0, visible=True, precision=0)
 
         inputs.submit(generate_response, [system_msg, inputs, top_p, temperature, chat_counter, chatbot, state],
-                      [chatbot, state, chat_counter], )
+                      [chatbot, state, chat_counter], ).then(fill_output_box, [], [yaml_output])
         b1.click(generate_response, [system_msg, inputs, top_p, temperature, chat_counter, chatbot, state],
-                 [chatbot, state, chat_counter], )
+                 [chatbot, state, chat_counter], ).then(fill_output_box, [], [yaml_output])
 
         inputs.submit(set_visible_false, [], [system_msg])
         b1.click(set_visible_false, [], [system_msg])
