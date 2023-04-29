@@ -1,6 +1,8 @@
 # IoT-GPT
 Raspberry Pi IoT Platform powered by GPT-4. Customize your own IoT application with natural language.
 
+![IoTGPT.png](docs%2FIoTGPT.png)
+
 ## Installation
 
 1. Clone this repository and install the required packages:
@@ -24,4 +26,4 @@ python iot_app.py
 
 ## Security Support
 
-If you need security support, such as setting up CoAP DTLS or generate TLS certs for MQTT, please refer the [Installation Notes](Installation.md).
+If you need security support, such as setting up CoAP DTLS or generate TLS certs for MQTT, please refer the [Installation Notes](docs/Installation.md).
