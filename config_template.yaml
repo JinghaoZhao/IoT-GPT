@@ -10,18 +10,6 @@ sensors:
     model: DHT22 # Sensor model
     pin: 4 # Pin number on the board
 
-# Network configuration
-networks:
-  # Cellular network
-  - category: cellular # Network category (e.g., cellular, wifi)
-    type: Cat-M1 # Network type: E.g., NB-IoT, Cat-M, LTE, 5G, etc. (mandatory)
-    apn: your_apn # Access Point Name for cellular network (mandatory)
-
-  # WiFi network
-  - category: wifi # Network category (e.g., cellular, wifi)
-    ssid: your_ssid # Wi-Fi SSID (mandatory for Wi-Fi)
-    password: your_wifi_password # Wi-Fi password (mandatory for Wi-Fi)
-
 # Traffic interval configuration
 traffic_interval: 60 # Value of seconds between two transmissions (mandatory)
 
@@ -41,3 +29,15 @@ protocol:
     client_certificate_path: './certs/client.crt' # Client certificate path (mandatory for TLS)
     client_key_path: './certs/client.key' # Client key path (mandatory for TLS)
     psk: '123456' # Pre-shared key (mandatory for DTLS)
+
+# Network configuration
+networks:
+  # Cellular network
+  - category: cellular # Network category (e.g., cellular, wifi)
+    type: Cat-M1 # Network type: E.g., NB-IoT, Cat-M, LTE, 5G, etc. (mandatory)
+    apn: your_apn # Access Point Name for cellular network (mandatory)
+
+  # WiFi network
+  - category: wifi # Network category (e.g., cellular, wifi)
+    ssid: your_ssid # Wi-Fi SSID (mandatory for Wi-Fi)
+    password: your_wifi_password # Wi-Fi password (mandatory for Wi-Fi)

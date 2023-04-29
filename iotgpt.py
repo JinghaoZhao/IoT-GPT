@@ -191,8 +191,8 @@ def main():
                 gr.Examples(
                     examples=[
                         ["I want to build a temperature sensor IoT app."],
-                        ["I want to build a temperature sensor IoT app with DHT22 connected to GPIO 15. The network uses NB-IoT with APN testapn. The application protocol uses MQTT with the following info broker: mqtt.example.com, default port, username: testuser, password: testpass topic: temp, security uses TLS."],
-                        ["I want to build a temperature sensor IoT app with DHT22 connected to GPIO 15. The network uses NB-IoT with APN testapn. The application protocol uses CoAP with the following info broker: coap.example.com, default port, username: testuser, password: testpass topic: temp, security uses DTLS, psk 123456"],
+                        ["I want to build a temperature sensor IoT app with DHT22 connected to GPIO 15. The sensor data is upload every 5 minutes. The network uses NB-IoT with APN testapn. The application protocol uses MQTT with the following info broker: mqtt.example.com, default port, username: testuser, password: testpass topic: temp, security uses TLS."],
+                        ["I want to build a temperature sensor IoT app with DHT22 connected to GPIO 15. The network uses NB-IoT with APN testapn. The sensor data is upload every 5 minutes. The application protocol uses CoAP with the following info broker: coap.example.com, default port, username: testuser, password: testpass topic: temp, security uses DTLS, psk 123456"],
                     ],
                     inputs=inputs)
 
