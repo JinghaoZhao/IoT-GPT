@@ -3,11 +3,13 @@ import json
 import requests
 import os
 from termcolor import colored
+import base64
+from io import BytesIO
 
 API_URL = "https://api.openai.com/v1/chat/completions"
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
-with open('config.yaml', 'r') as file:
+with open('config_template.yaml', 'r') as file:
     config = file.read()
 
 IoTGPT_prompt = """Now you are an expert IoT configuration developer and programmer. 
@@ -89,7 +91,6 @@ def generate_response(system_msg, inputs, top_p, temperature, chat_counter, chat
             # Extract YAML config from response and update the text box
             yaml_start = partial_words.find("```yaml")
             yaml_end = partial_words.find("```", yaml_start + 7)
-            print(yaml_start, yaml_end)
             if yaml_start != -1 and yaml_end != -1:
                 yaml_config = partial_words[yaml_start + 7: yaml_end].strip()
                 print(colored(yaml_config, "red"))
@@ -127,6 +128,15 @@ def set_visible_false():
 def set_visible_true():
     return gr.update(visible=True)
 
+def download_config():
+    file_contents = generated_yaml_config.encode("utf-8")
+    buffered = BytesIO()
+    buffered.write(file_contents)
+    buffered.seek(0)
+    b64 = base64.b64encode(buffered.read()).decode()
+    return f'<a download="config.yaml" href="data:text/yaml;base64,{b64}" id="download_link"><strong>Download Configuration</strong></a>'
+
+
 def main():
 
     title = """<h1 align="center">IoT-GPT</h1>"""
@@ -160,9 +170,7 @@ def main():
                         elem_id="chatbot"
                     )
                 with gr.Column(scale=3):
-                    save_config = gr.Button(
-                        value="Save Configuration",
-                    ).style(full_width=True)
+                    save_config = gr.HTML("""<a download="config.yaml" id="download_link"><strong>Download Configuration</strong></a>""")
                     yaml_output = gr.Textbox(
                         label="Generated IoT Configuration",
                         lines=20
@@ -196,9 +204,9 @@ def main():
                 chat_counter = gr.Number(value=0, visible=True, precision=0)
 
         inputs.submit(generate_response, [system_msg, inputs, top_p, temperature, chat_counter, chatbot, state],
-                      [chatbot, state, chat_counter], ).then(fill_output_box, [], [yaml_output])
+                      [chatbot, state, chat_counter], ).then(fill_output_box, [], [yaml_output]).then(download_config, [], [save_config])
         b1.click(generate_response, [system_msg, inputs, top_p, temperature, chat_counter, chatbot, state],
-                 [chatbot, state, chat_counter], ).then(fill_output_box, [], [yaml_output])
+                 [chatbot, state, chat_counter], ).then(fill_output_box, [], [yaml_output]).then(download_config, [], [save_config])
 
         inputs.submit(set_visible_false, [], [system_msg])
         b1.click(set_visible_false, [], [system_msg])
