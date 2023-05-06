@@ -26,4 +26,7 @@ python iot_app.py
 
 ## Security Support
 
-If you need security support, such as setting up CoAP DTLS or generate TLS certs for MQTT, please refer the [Installation Notes](docs/Installation.md).
+If you need security support, such as setting up CoAP DTLS or generate TLS certs for MQTT, please refer the [Security Setup](docs/Security.md).
+
+## Knowledge Base
+IoT-GPT supports using a knowledge base to answer IoT-related questions. You can preload documents or provide URLs as background knowledge for your IoT application. More details can be found in [Knowledge Base](docs/KnowledgeBase.md).

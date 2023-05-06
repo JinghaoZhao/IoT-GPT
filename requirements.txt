@@ -7,3 +7,10 @@ adafruit-circuit
 python-dht
 aiocoap
 termcolor
+openai
+tenacity
+supabase
+langchain
+tiktoken
+beautifulsoup4
+faiss-cpu

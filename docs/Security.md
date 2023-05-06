@@ -1,4 +1,4 @@
-# Installation Notes
+# Security Setup
 
 ## CoAP DTLS Support
 
