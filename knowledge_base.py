@@ -5,7 +5,7 @@ from supabase import create_client, Client
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import FAISS, SupabaseVectorStore
-from langchain.document_loaders import TextLoader
+from langchain.document_loaders import TextLoader, PyPDFLoader
 import requests
 from bs4 import BeautifulSoup
 import pickle
@@ -16,7 +16,10 @@ def load_documents(filenames):
     text_splitter = CharacterTextSplitter(chunk_size=1500, chunk_overlap=0)
     docs = []
     for filename in filenames:
-        loader = TextLoader(filename)
+        if filename.endswith(".pdf"):
+            loader = PyPDFLoader(filename)
+        else:
+            loader = TextLoader(filename)
         documents = loader.load()
         splits = text_splitter.split_documents(documents)
         docs.extend(splits)
